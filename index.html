@@ -70,16 +70,16 @@ var bank=[
 ["🐒","xadina","x",["x","ċ","s"]],["🐔","tiġieġa","t",["t","d","p"]],["🐝","żunżan","ż",["ż","z","ġ"]],
 ["🦎","gremxula","g",["g","ġ","k"]],["🦔","qanfud","q",["q","k","g"]]
 ];
-var animalPics={'qattus':"assets/image_jpg_01.jpg",'kelb':"assets/image_jpg_02.jpg",'żiemel':"assets/image_jpg_03.jpg",'naħla':"assets/image_jpg_04.jpg",'baqra':"assets/image_jpg_05.jpg",'nagħġa':"assets/image_jpg_06.jpg",'ħanżir':"assets/image_jpg_07.jpg",'fenek':"assets/image_jpg_08.jpg",'tiġieġa':"assets/image_jpg_09.jpg",
-"qattus":"assets/animal_qattus.jpg",
-"kelb":"assets/animal_kelb.jpg",
-"baqra":"assets/animal_baqra.jpg",
-"ħmar":"assets/animal_ħmar.jpg",
-"nagħġa":"assets/animal_nagħġa.jpg",
-"ħanżir":"assets/animal_ħanżir.jpg",
-"fenek":"assets/animal_fenek.jpg",
-"tiġieġa":"assets/animal_tiġieġa.jpg",
-"żrinġ":"assets/animal_żrinġ.png"
+var animalPics={
+'qattus':"assets/animal_qattus.jpg",'kelb':"assets/animal_kelb.jpg",'żiemel':"assets/animal_ziemel.jpg",
+'naħla':"assets/animal_nahla.jpg",'baqra':"assets/animal_baqra.jpg",'nagħġa':"assets/animal_naghga.jpg",
+'għasfur':"assets/animal_ghasfur.jpg",'tigra':"assets/animal_tigra.jpg",'iljunfant':"assets/animal_iljunfant.jpg",
+'ċawla':"assets/animal_cawla.jpg",'ajkla':"assets/animal_ajkla.jpg",'dudu':"assets/animal_dudu.jpg",
+'żrinġ':"assets/animal_zrinc.jpg",'mogħża':"assets/animal_moghoza.jpg",'farfett':"assets/animal_farfett.jpg",
+'ġiraffa':"assets/animal_giraffa.jpg",'ħanżir':"assets/animal_hanzir.jpg",'fenek':"assets/animal_fenek.jpg",
+'ħmar':"assets/animal_hmar.jpg",'ors':"assets/animal_ors.jpg",'kukkudrill':"assets/animal_kukkudrill.jpg",
+'xadina':"assets/animal_xadina.jpg",'tiġieġa':"assets/animal_tigiega.jpg",'żunżan':"assets/animal_zunzan.jpg",
+'gremxula':"assets/animal_gremxula.jpg",'qanfud':"assets/animal_qanfud.jpg"
 };
 var imgs={winner:"assets/image_png_04.png",unsure:"assets/image_png_05.png",wrong:"assets/image_png_06.png",happy:"assets/image_png_07.png",pleased:"assets/image_png_08.png",'żrinġ':"assets/image_png_09.png"};
 function E(x){return document.getElementById(x)} function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
@@ -100,9 +100,9 @@ function finish(){
       '<div class="win2Prosit">Prosit!</div>'+
       '<div class="win2Done">Għamiltha kollha!</div>'+
       '<div class="win2Star">⭐</div>'+
+      '<button class="win2Replay" id="replayBtn" type="button">Erġa’ ilgħab ↻</button>'+
     '</div>';
-  var next=E("next");
-  if(next){next.style.display="block";next.style.display="block";next.textContent="Erġa’ ilgħab ↻";next.onclick=function(){location.reload();};}
+  E("replayBtn").onclick=function(){location.reload();};
 }
 render();
 })();
@@ -365,5 +365,9 @@ render();
 }
 .win2Star{
  font-size:48px;line-height:1;margin-top:8px;
+}
+.win2Replay{
+ margin-top:14px;background:#0871d8;color:#fff;border:4px solid #065da9;
+ border-radius:22px;font-size:24px;font-weight:900;padding:11px 28px;cursor:pointer;
 }
 </style>
