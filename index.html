@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="mt">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agħżel l-ittra t-tajba — Tgħallem ma' Tusa</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#e8f6ff;font-family:Arial,"Trebuchet MS",sans-serif;color:#111}
+.game{max-width:1100px;margin:14px auto;background:#ff9b22;border:9px solid #0879df;border-radius:32px;padding:14px}
+.header{height:88px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;gap:25px}
+.mainlogo{width:47%;max-width:480px;max-height:76px;object-fit:contain;object-position:left}
+.learnlogo{width:31%;max-width:310px;max-height:70px;object-fit:contain;object-position:right}
+.board{background:#fff;border:6px solid #0879df;border-radius:30px;min-height:650px;padding:18px;display:grid;
+grid-template-columns:125px 1fr 300px;grid-template-rows:auto 1fr;gap:10px 18px}
+.counter,.points{align-self:start;background:#fff7df;border:3px solid #f7dfad;border-radius:20px;text-align:center;color:#075eae;font-weight:900;padding:10px}
+.counter b,.points b{display:block;font-size:38px;margin-top:4px}.points{grid-column:1}
+.left{grid-column:3;grid-row:2;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:4px;overflow:visible}
+.thought{font-size:62px;color:#0871d8;border:5px solid #0871d8;border-radius:50%;width:115px;height:95px;display:flex;align-items:center;justify-content:center;margin-bottom:-2px;background:#fff}
+.tusa{width:300px;height:365px;object-fit:contain;object-position:center bottom;display:block;margin:-10px 0 0}
+.content{grid-column:2;grid-row:1/3;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+h1{font-size:clamp(30px,4vw,48px);color:#0871d8;margin:0 0 5px}.prompt{width:100%;background:#fff5d9;border:4px solid #086dc8;border-radius:19px;padding:10px;font-size:25px;font-weight:900;color:#075eae;margin:8px 0 12px}
+.animalFrame{width:min(100%,610px);height:315px;border:5px solid #0871d8;border-radius:25px;background:linear-gradient(#bcecff,#effaff);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.animal{font-size:190px;line-height:1}.word{font-size:72px;font-weight:900;margin:10px 0 8px;display:flex;align-items:center;justify-content:center}
+.blank{min-width:82px;height:83px;border:5px solid #0871d8;border-radius:13px;margin-right:7px;display:flex;align-items:center;justify-content:center;padding:0 7px;color:#0871d8}
+.choices{display:flex;gap:22px;justify-content:center;width:100%}.choice{min-width:145px;background:#bde7ff;border:5px solid #0871d8;border-radius:20px;font-size:51px;font-weight:900;padding:10px 25px;cursor:pointer}
+.choice:hover{background:#dff5ff}.choice:disabled{opacity:.55}.feedback{height:38px;font-size:27px;font-weight:900;margin-top:8px}
+.next{display:none;background:#65a9e8;border:4px solid #0871d8;border-radius:22px;color:white;font-size:23px;font-weight:900;padding:10px 30px;cursor:pointer}
+.endTusa{width:330px;height:330px;object-fit:contain}.restart{background:#0871d8;color:white;border:0;border-radius:18px;font-size:22px;font-weight:900;padding:13px 25px;cursor:pointer}
+@media(max-width:800px){.board{grid-template-columns:130px 1fr;grid-template-rows:auto 1fr}.points{grid-column:2;grid-row:1;width:110px;justify-self:end}.content{grid-column:1/3;grid-row:2;padding-bottom:210px}.left{position:absolute;bottom:35px;left:25px}.board{position:relative}.tusa{width:225px;height:245px;object-fit:contain;object-position:center bottom;margin:-5px 0 0}.thought{width:80px;height:65px;font-size:42px}.animalFrame{height:250px}.animal{font-size:145px}.choices{gap:8px}.choice{min-width:90px;font-size:40px}.header{height:65px}}
+
+.animalPic{font-size:0;width:100%;height:100%;object-fit:contain;object-position:center;background:#fff;display:block}
+.animalFrame{background:#fff}
+
+/* Google Sites embed compatibility — packaging only */
+html,body{margin:0!important;padding:0!important;width:100%!important;min-height:100%!important;overflow-x:hidden;}
+body{box-sizing:border-box;}
+*,*:before,*:after{box-sizing:border-box;}
+@media (max-width:700px){body{padding-left:4px!important;padding-right:4px!important;}}
+</style></head>
+<body>
+<audio id="bgMusic" loop preload="auto">
+<source src="assets/music.mp3" type="audio/wav">
+</audio>
+<button id="musicBtn" type="button" aria-label="Ixgħel jew itfi l-mużika" title="Mużika">♫</button>
+<main class="game">
+<header class="header"><img class="mainlogo" src="assets/image_png_01.png" alt="L-Avventuri ta' Tusa"><img class="learnlogo" src="assets/image_png_02.png" alt="Tgħallem ma' Tusa"></header>
+<section class="board" id="board">
+<div class="counter">Mistoqsija<b id="progress">1 / 10</b></div>
+<div class="points">Punti<b id="score">0</b></div>
+<div class="left"><div class="thought" id="thought">?</div><img class="tusa" id="tusa" src="assets/image_png_03.png" alt="Tusa"></div>
+<div class="content" id="content">
+<h1>Agħżel l-ittra t-tajba</h1>
+<div class="animalFrame"><img class="animal animalPic" id="animal" alt=""></div>
+<div class="word"><span class="blank" id="blank">&nbsp;</span><span id="rest"></span></div>
+<div class="prompt">B'liema ittra tibda l-kelma?</div>
+<div class="choices" id="choices"></div>
+<div class="feedback" id="feedback"></div>
+<button class="next" id="next">Li jmiss →</button>
+</div></section></main>
+<script>
+(function(){
+"use strict";
+var bank=[
+["🐱","qattus","q",["q","f","m"]],["🐶","kelb","k",["k","f","m"]],["🐴","żiemel","ż",["ż","z","ġ"]],
+["🐝","naħla","n",["n","m","b"]],["🐄","baqra","b",["b","p","d"]],["🐑","nagħġa","n",["n","m","r"]],
+["🐦","għasfur","għ",["għ","g","ġ"]],["🐯","tigra","t",["t","d","p"]],["🐘","iljunfant","i",["i","l","e"]],
+["🐦","ċawla","ċ",["ċ","c","ġ"]],["🦅","ajkla","a",["a","e","o"]],["🐛","dudu","d",["d","t","b"]],
+["🐸","żrinġ","ż",["ż","z","ġ"]],["🐐","mogħża","m",["m","n","b"]],["🦋","farfett","f",["f","v","t"]],
+["🦒","ġiraffa","ġ",["ġ","g","ċ"]],["🐷","ħanżir","ħ",["ħ","h","għ"]],["🐰","fenek","f",["f","v","p"]],
+["🫏","ħmar","ħ",["ħ","h","m"]],["🐻","ors","o",["o","a","u"]],["🐊","kukkudrill","k",["k","q","g"]],
+["🐒","xadina","x",["x","ċ","s"]],["🐔","tiġieġa","t",["t","d","p"]],["🐝","żunżan","ż",["ż","z","ġ"]],
+["🦎","gremxula","g",["g","ġ","k"]],["🦔","qanfud","q",["q","k","g"]]
+];
+var animalPics={'qattus':"assets/image_jpg_01.jpg",'kelb':"assets/image_jpg_02.jpg",'żiemel':"assets/image_jpg_03.jpg",'naħla':"assets/image_jpg_04.jpg",'baqra':"assets/image_jpg_05.jpg",'nagħġa':"assets/image_jpg_06.jpg",'ħanżir':"assets/image_jpg_07.jpg",'fenek':"assets/image_jpg_08.jpg",'tiġieġa':"assets/image_jpg_09.jpg"};
+var imgs={winner:"assets/image_png_04.png",unsure:"assets/image_png_05.png",wrong:"assets/image_png_06.png",happy:"assets/image_png_07.png",pleased:"assets/image_png_08.png",'żrinġ':"assets/image_png_09.png"};
+function E(x){return document.getElementById(x)} function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+var qs=shuffle(bank).slice(0,10),i=0,score=0,first=true;
+function render(){var q=qs[i];first=true;if(animalPics[q[1]]){E("animal").src=animalPics[q[1]];E("animal").alt=q[1]}else{E("animal").src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"600\" height=\"315\"><rect width=\"100%\" height=\"100%\" fill=\"white\"/><text x=\"50%\" y=\"62%\" text-anchor=\"middle\" font-size=\"180\">"+q[0]+"</text></svg>");E("animal").alt=q[1]};E("blank").innerHTML="&nbsp;";E("rest").textContent=q[1].substring(q[2].length);E("feedback").textContent="";E("next").style.display="none";E("tusa").src=imgs.unsure;E("thought").textContent="?";E("thought").className="thought";E("progress").textContent=(i+1)+" / 10";var a=E("choices");a.innerHTML="";shuffle(q[3]).forEach(function(l){var b=document.createElement("button");b.className="choice";b.type="button";b.textContent=l;b.onclick=function(){check(l,b)};a.appendChild(b)})}
+function check(l,b){var q=qs[i];E("blank").textContent=l;if(l===q[2]){if(first){score++;E("score").textContent=score}E("feedback").textContent="";E("tusa").src=imgs.happy;E("thought").textContent="Prosit! ⭐";E("thought").className="thought prosit";Array.prototype.forEach.call(E("choices").children,function(x){x.disabled=true});E("next").style.display="inline-block"}else{first=false;b.disabled=true;E("feedback").textContent="";E("tusa").src=imgs.wrong;E("thought").textContent="Erġa' pprova!";E("thought").className="thought retry"}}
+E("next").onclick=function(){i++;if(i<10)render();else finish()};
+function finish(){
+  E("progress").textContent="10 / 10";
+  E("score").textContent=score;
+  E("tusa").style.visibility="visible";
+  E("tusa").src=imgs.pleased;
+  E("thought").textContent="Prosit! ⭐";
+  E("thought").className="thought prosit";
+  E("content").innerHTML=
+    '<div class="win2">'+
+      '<img class="win2Run" src="'+imgs.winner+'" alt="Tusa tiċċelebra">'+
+      '<div class="win2Prosit">Prosit!</div>'+
+      '<div class="win2Done">Għamiltha kollha!</div>'+
+      '<div class="win2Star">⭐</div>'+
+    '</div>';
+  var next=E("next");
+  if(next){next.style.display="block";next.textContent="Erġa’ ibda ↻";next.onclick=function(){location.reload();};}
+}
+render();
+})();
+</script></body></html>
+<style>
+@media(min-width:801px){
+  .counter{grid-column:1;grid-row:1}
+  .points{grid-column:3;grid-row:1}
+  .left{grid-column:3;grid-row:2;width:300px;justify-self:center}
+  .content{grid-column:2;grid-row:1/3}
+  .tusa{width:300px;height:365px;object-fit:contain;object-position:center bottom;margin:-10px 0 0}
+}
+</style>
+
+<style>
+@media(min-width:801px){
+  .board{grid-template-columns:125px 1fr 330px}
+  .counter{grid-column:1;grid-row:1}
+  .points{grid-column:3;grid-row:1}
+  .left{grid-column:3;grid-row:2;width:330px;justify-self:center;align-self:end;padding-bottom:0}
+  .content{grid-column:2;grid-row:1/3}
+  .tusa{width:330px!important;height:390px!important;object-fit:contain!important;object-position:center bottom!important;margin:0!important;transform:none!important}
+}
+</style>
+
+<style>
+.word{margin:10px 0 8px!important}
+.prompt{margin:0 0 10px!important}
+</style>
+
+<style>
+#musicBtn{
+ position:fixed;right:18px;bottom:18px;z-index:9999;
+ width:54px;height:54px;border-radius:50%;
+ border:4px solid #0871d8;background:#fff5d9;color:#0871d8;
+ font-size:28px;font-weight:900;cursor:pointer;
+ box-shadow:0 3px 8px rgba(0,0,0,.18)
+}
+#musicBtn.off{opacity:.55}
+</style>
+<script>
+(function(){
+ var music=document.getElementById("bgMusic"), btn=document.getElementById("musicBtn");
+ music.volume=0.32;
+ function startMusic(){
+   music.play().then(function(){btn.classList.remove("off");})
+   .catch(function(){btn.classList.add("off");});
+ }
+ // Browsers normally require the child's first click/tap before audio may start.
+ document.addEventListener("pointerdown",function first(){
+   startMusic(); document.removeEventListener("pointerdown",first);
+ },{once:true});
+ btn.addEventListener("click",function(e){
+   e.stopPropagation();
+   if(music.paused){startMusic();}else{music.pause();btn.classList.add("off");}
+ });
+})();
+</script>
+
+<style>
+@media(min-width:801px){
+  .left{
+    grid-column:3!important;
+    grid-row:2!important;
+    width:330px!important;
+    height:545px!important;
+    align-self:end!important;
+    justify-self:center!important;
+    display:grid!important;
+    grid-template-rows:155px 390px!important;
+    align-items:end!important;
+    justify-items:center!important;
+    padding:0!important;
+    overflow:visible!important;
+  }
+  .thought{
+    box-sizing:border-box!important;
+    width:285px!important;
+    height:135px!important;
+    margin:0 0 4px 0!important;
+    border:5px solid #0871d8!important;
+    border-radius:50%!important;
+    background:white!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    color:#0871d8!important;
+    font-size:62px!important;
+    font-weight:900!important;
+    line-height:1!important;
+    position:relative!important;
+    z-index:2!important;
+  }
+  .thought:after{
+    content:""!important;
+    position:absolute!important;
+    bottom:-22px!important;
+    left:55%!important;
+    width:28px!important;
+    height:28px!important;
+    background:white!important;
+    border-right:5px solid #0871d8!important;
+    border-bottom:5px solid #0871d8!important;
+    transform:rotate(45deg)!important;
+  }
+  .thought.prosit{
+    font-size:42px!important;
+  }
+  .tusa{
+    width:330px!important;
+    height:390px!important;
+    object-fit:contain!important;
+    object-position:center bottom!important;
+    margin:0!important;
+    transform:none!important;
+    align-self:end!important;
+  }
+  /* Reserve feedback/navigation height permanently so nothing moves. */
+  .feedback{height:0!important;min-height:0!important;margin:0!important;overflow:hidden!important}
+  .next{
+    position:absolute!important;
+    right:34px!important;
+    bottom:18px!important;
+    width:180px!important;
+    height:54px!important;
+    margin:0!important;
+    z-index:5!important;
+  }
+  .board{position:relative!important;padding-bottom:82px!important}
+}
+</style>
+
+<style>
+@media(min-width:801px){
+ .thought.retry{
+   font-size:31px!important;
+   line-height:1.05!important;
+   padding:12px 20px!important;
+   text-align:center!important;
+ }
+}
+</style>
+
+<style>
+.winnerTusa{
+ width:390px!important;
+ height:300px!important;
+ object-fit:contain!important;
+ object-position:center!important;
+ display:block!important;
+ margin:4px auto 8px!important;
+}
+</style>
+
+<style>
+.winnerTusa{
+ width:520px!important;
+ height:365px!important;
+ object-fit:contain!important;
+ object-position:center!important;
+ display:block!important;
+ margin:0 auto 2px!important;
+ background:#fff!important;
+}
+</style>
+
+<style>
+.finalCentral{
+ width:100%;height:100%;
+ display:flex;flex-direction:column;
+ align-items:center;justify-content:center;
+ background:#fff;text-align:center;
+}
+.finalRunning{
+ width:560px!important;max-width:95%!important;
+ height:350px!important;object-fit:contain!important;
+ object-position:center!important;background:#fff!important;
+ margin:0 auto 2px!important;
+}
+.finalProsit{font-size:58px;font-weight:900;line-height:1;color:#0871d8}
+.finalDone{font-size:32px;font-weight:900;line-height:1.15;color:#0871d8;margin-top:6px}
+.finalStar{font-size:42px;line-height:1;margin:5px 0}
+.finalRestart{
+ background:#55a9ec;color:#fff;border:4px solid #0871d8;
+ border-radius:22px;font-size:22px;font-weight:900;
+ padding:10px 28px;cursor:pointer;margin-top:5px;
+}
+</style>
+
+<style>
+.winScene{
+ width:100%;
+ height:100%;
+ min-height:590px;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ background:#fff;
+ text-align:center;
+ overflow:hidden;
+}
+.winRunningTusa{
+ width:590px!important;
+ max-width:96%!important;
+ height:370px!important;
+ object-fit:contain!important;
+ object-position:center!important;
+ display:block!important;
+ margin:-12px auto 0!important;
+ background:#fff!important;
+}
+.winProsit{
+ margin-top:-5px;
+ color:#0871d8;
+ font-size:64px;
+ line-height:1;
+ font-weight:900;
+}
+.winDone{
+ color:#0871d8;
+ font-size:35px;
+ line-height:1.15;
+ font-weight:900;
+ margin-top:6px;
+}
+.winSparkles{
+ font-size:38px;
+ line-height:1;
+ margin:7px 0 9px;
+}
+.winRestart{
+ background:#55a9ec;
+ color:#fff;
+ border:4px solid #0871d8;
+ border-radius:24px;
+ font-size:22px;
+ font-weight:900;
+ padding:10px 30px;
+ cursor:pointer;
+}
+</style>
+
+<style>
+.win2{
+ width:100%;height:100%;min-height:565px;
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ background:#fff;text-align:center;overflow:hidden;
+}
+.win2Run{
+ width:690px!important;max-width:96%!important;height:390px!important;
+ object-fit:contain!important;object-position:center!important;
+ display:block!important;margin:-10px auto -8px!important;background:#fff!important;
+}
+.win2Prosit{
+ color:#0871d8;font-size:66px;font-weight:900;line-height:.95;
+}
+.win2Done{
+ color:#0871d8;font-size:35px;font-weight:900;line-height:1.1;margin-top:8px;
+}
+.win2Star{
+ font-size:48px;line-height:1;margin-top:8px;
+}
+</style>
