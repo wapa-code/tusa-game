@@ -1,0 +1,79 @@
+<!doctype html><html lang="mt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tgħallem ma' Tusa</title><style>
+*{box-sizing:border-box} body{margin:0;background:#fff7e9;font-family:Arial,"Noto Sans",sans-serif;color:#17365d}
+.app{width:min(100%,430px);min-height:100dvh;margin:auto;padding:14px 16px 22px;display:flex;flex-direction:column;align-items:center}
+.logo{width:min(86%,330px);height:auto;margin:4px auto 12px}
+.progress{font-size:15px;font-weight:700;align-self:flex-end;margin:0 4px 8px;color:#4b73b9}
+.card{width:100%;background:white;border:3px solid #4c8ee8;border-radius:24px;padding:14px;box-shadow:0 5px 14px #00000012;text-align:center}
+.animal{width:100%;height:38dvh;max-height:330px;min-height:230px;object-fit:contain;background:white;border-radius:18px}
+.word{font-family:Arial,"Noto Sans",sans-serif;font-size:clamp(38px,11vw,56px);font-weight:800;margin:8px 0 4px;letter-spacing:.5px;display:flex;align-items:center;justify-content:center;line-height:1}
+.blank{font-family:inherit;font-size:inherit;font-weight:inherit;display:inline-flex;min-width:1.08em;height:1.08em;border:3px solid #4c8ee8;border-radius:10px;align-items:center;justify-content:center;margin-right:3px;color:#17365d;line-height:1;transform:none;vertical-align:middle}
+.prompt{font-size:20px;font-weight:700;margin:12px 0 10px}
+.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
+button{min-height:72px;border:3px solid #4c8ee8;border-radius:18px;background:#eef6ff;color:#245aa8;font-size:36px;font-weight:800;cursor:pointer}
+button:active{transform:scale(.97)} .ok{background:#dff5df;border-color:#4fae5b;color:#267232} .bad{background:#ffe4e4;border-color:#df6262;color:#a82f2f}
+.feedback{height:34px;font-size:20px;font-weight:800;margin-top:9px} .next{display:none;width:100%;min-height:58px;font-size:21px;background:#4c8ee8;color:white;margin-top:5px}
+.finish{font-size:34px;font-weight:800;padding:45px 10px} .restart{font-size:22px;margin-top:20px;width:100%}
+@media (max-height:700px){.app{padding-top:7px}.logo{width:64%;margin-bottom:5px}.animal{height:31dvh;min-height:170px}.word{font-family:Arial,"Noto Sans",sans-serif;font-size:clamp(38px,11vw,56px);font-weight:800;margin:8px 0 4px;letter-spacing:.5px;display:flex;align-items:center;justify-content:center;line-height:1}.prompt{margin:6px 0}button{min-height:58px}}
+</style>
+<style>
+.screenOverlay{width:min(100%,430px);margin:0 auto;text-align:center}
+.screenOverlay img{display:block;width:100%;height:auto}
+.screenOverlay button{width:100%;min-height:58px;margin-top:10px;border:3px solid #4c8ee8;border-radius:18px;background:#4c8ee8;color:#fff;font-size:21px;font-weight:800}
+</style>
+
+<style id="mobileFitV9">
+html,body{margin:0;width:100%;min-height:100%;overflow:hidden}
+body{height:100vh;height:100dvh}
+.screenOverlay{
+  width:100%;
+  height:100vh;
+  height:100dvh;
+  max-width:430px;
+  margin:0 auto;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.screenOverlay>img{
+  display:block;
+  max-width:100%;
+  max-height:100%;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+}
+#gameApp{
+  max-height:100vh;
+  max-height:100dvh;
+  overflow:hidden;
+  box-sizing:border-box;
+}
+</style>
+</head><body><audio id="bgMusic" loop preload="auto" style="display:none"><source src="assets/background_music.wav" type="audio/wav"></audio><section class="screenOverlay" id="introScreen" style="position:relative">
+<img src="assets/intro.png" alt="L-Annimali">
+<button type="button" id="startHotspot" aria-label="Ibda" style="position:absolute;left:6%;width:88%;top:76%;height:13%;opacity:0;cursor:pointer;z-index:20;touch-action:manipulation"></button>
+</section><main class="app" id="gameApp" style="display:none">
+<img class="logo" src="assets/embedded_png_02.png" alt="Tgħallem ma' Tusa">
+<div class="progress" id="progress"></div><section class="card" id="card">
+<img id="animal" class="animal" alt=""><div class="word"><span class="blank" id="blank"></span><span id="rest"></span></div>
+<div class="prompt">B'liema ittra tibda l-kelma?</div><div class="choices" id="choices"></div>
+<div class="feedback" id="feedback"></div><button class="next" id="next">Li jmiss →</button></section></main>
+<script>
+const bank=[{"name": "qattus", "rest": "attus", "answer": "q", "choices": ["q", "f", "m"], "pic": "assets/embedded_jpg_01.jpg"}, {"name": "kelb", "rest": "elb", "answer": "k", "choices": ["k", "f", "m"], "pic": "assets/embedded_jpg_02.jpg"}, {"name": "żiemel", "rest": "iemel", "answer": "ż", "choices": ["ż", "z", "ġ"], "pic": "assets/embedded_jpg_03.jpg"}, {"name": "naħla", "rest": "aħla", "answer": "n", "choices": ["n", "m", "b"], "pic": "assets/embedded_jpg_04.jpg"}, {"name": "baqra", "rest": "aqra", "answer": "b", "choices": ["b", "p", "d"], "pic": "assets/embedded_jpg_05.jpg"}, {"name": "nagħġa", "rest": "agħġa", "answer": "n", "choices": ["n", "m", "r"], "pic": "assets/embedded_jpg_06.jpg"}, {"name": "għasfur", "rest": "asfur", "answer": "għ", "choices": ["għ", "g", "ġ"], "pic": "assets/embedded_jpg_07.jpg"}, {"name": "tigra", "rest": "igra", "answer": "t", "choices": ["t", "d", "p"], "pic": "assets/embedded_jpg_08.jpg"}, {"name": "iljunfant", "rest": "ljunfant", "answer": "i", "choices": ["i", "l", "e"], "pic": "assets/embedded_jpg_09.jpg"}, {"name": "ċawla", "rest": "awla", "answer": "ċ", "choices": ["ċ", "c", "ġ"], "pic": "assets/embedded_jpg_10.jpg"}, {"name": "ajkla", "rest": "jkla", "answer": "a", "choices": ["a", "e", "o"], "pic": "assets/embedded_jpg_11.jpg"}, {"name": "dudu", "rest": "udu", "answer": "d", "choices": ["d", "t", "b"], "pic": "assets/embedded_jpg_12.jpg"}, {"name": "żrinġ", "rest": "rinġ", "answer": "ż", "choices": ["ż", "z", "ġ"], "pic": "assets/embedded_jpg_13.jpg"}, {"name": "mogħża", "rest": "ogħża", "answer": "m", "choices": ["m", "n", "b"], "pic": "assets/embedded_jpg_14.jpg"}, {"name": "farfett", "rest": "arfett", "answer": "f", "choices": ["f", "v", "t"], "pic": "assets/embedded_jpg_15.jpg"}, {"name": "ġiraffa", "rest": "iraffa", "answer": "ġ", "choices": ["ġ", "g", "ċ"], "pic": "assets/embedded_jpg_16.jpg"}, {"name": "ħanżir", "rest": "anżir", "answer": "ħ", "choices": ["ħ", "h", "għ"], "pic": "assets/embedded_jpg_17.jpg"}, {"name": "fenek", "rest": "enek", "answer": "f", "choices": ["f", "v", "p"], "pic": "assets/embedded_jpg_18.jpg"}, {"name": "ħmar", "rest": "mar", "answer": "ħ", "choices": ["ħ", "h", "m"], "pic": "assets/embedded_jpg_19.jpg"}, {"name": "ors", "rest": "rs", "answer": "o", "choices": ["o", "a", "u"], "pic": "assets/embedded_jpg_20.jpg"}, {"name": "kukkudrill", "rest": "ukkudrill", "answer": "k", "choices": ["k", "q", "g"], "pic": "assets/embedded_jpg_21.jpg"}, {"name": "xadina", "rest": "adina", "answer": "x", "choices": ["x", "ċ", "s"], "pic": "assets/embedded_jpg_22.jpg"}, {"name": "tiġieġa", "rest": "iġieġa", "answer": "t", "choices": ["t", "d", "p"], "pic": "assets/embedded_jpg_23.jpg"}, {"name": "żunżan", "rest": "unżan", "answer": "ż", "choices": ["ż", "z", "ġ"], "pic": "assets/embedded_jpg_24.jpg"}, {"name": "gremxula", "rest": "remxula", "answer": "g", "choices": ["g", "ġ", "k"], "pic": "assets/embedded_jpg_25.jpg"}, {"name": "qanfud", "rest": "anfud", "answer": "q", "choices": ["q", "k", "g"], "pic": "assets/embedded_jpg_26.jpg"}]; let game=[...bank].sort(()=>Math.random()-.5).slice(0,10),i=0;
+const $=x=>document.getElementById(x);
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function show(){let a=game[i];$("progress").textContent=(i+1)+" / 10";$("animal").src=a.pic;$("animal").alt=a.name;$("blank").textContent="";$("rest").textContent=a.rest;$("feedback").textContent="";$("next").style.display="none";$("choices").innerHTML="";
+shuffle(a.choices).forEach(c=>{let b=document.createElement("button");b.textContent=c;b.onclick=()=>answer(b,c,a);$("choices").appendChild(b)})}
+function answer(b,c,a){if(c===a.answer){$("blank").textContent=c;b.className="ok";$("feedback").textContent="Prosit! ⭐";[...$("choices").children].forEach(x=>x.disabled=true);$("next").style.display="block"}else{b.className="bad";$("feedback").textContent="Erġa' pprova!";setTimeout(()=>b.className="",450)}}
+$("next").onclick=()=>{i++;if(i<game.length)show();else {$("progress").style.display="none";document.getElementById("gameApp").style.display="none";document.body.insertAdjacentHTML("beforeend",'<section class="screenOverlay" id="winScreen" style="position:relative"><img src="assets/winning.png" alt="Prosit!"><button type="button" id="replayHotspot" aria-label="Erġa’ ilgħab" style="position:absolute;left:14%;width:72%;top:75%;height:11%;opacity:0;cursor:pointer;z-index:20;touch-action:manipulation"></button></section>');document.getElementById("replayHotspot").addEventListener("click",function(){location.reload()})}};show();
+document.getElementById("startHotspot").addEventListener("click",function(){
+  var music=document.getElementById("bgMusic");
+  music.volume=0.32;
+  music.play().catch(function(){});
+  document.getElementById("introScreen").style.display="none";
+  document.getElementById("gameApp").style.display="flex";
+});
+</script></body></html>
