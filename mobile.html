@@ -70,15 +70,10 @@ shuffle(a.choices).forEach(c=>{let b=document.createElement("button");b.textCont
 function answer(b,c,a){if(c===a.answer){$("blank").textContent=c;b.className="ok";$("feedback").textContent="Prosit! ⭐";[...$("choices").children].forEach(x=>x.disabled=true);$("next").style.display="block"}else{b.className="bad";$("feedback").textContent="Erġa' pprova!";setTimeout(()=>b.className="",450)}}
 $("next").onclick=()=>{i++;if(i<game.length)show();else {$("progress").style.display="none";document.getElementById("gameApp").style.display="none";document.body.insertAdjacentHTML("beforeend",'<section class="screenOverlay" id="winScreen" style="position:relative"><img src="assets/winning.png" alt="Prosit!"><button type="button" id="replayHotspot" aria-label="Erġa’ ilgħab" style="position:absolute;left:14%;width:72%;top:75%;height:11%;opacity:0;cursor:pointer;z-index:20;touch-action:manipulation"></button></section>');document.getElementById("replayHotspot").addEventListener("click",function(){location.reload()})}};show();
 document.getElementById("startHotspot").addEventListener("click",function(){
-  var music=document.getElementById("bgMusic");
+  var music=new Audio("assets/background_music.mp3");
+  music.loop=true;
   music.volume=0.32;
-  music.load();
-  var playPromise=music.play();
-  if(playPromise!==undefined){
-    playPromise.catch(function(){
-      setTimeout(function(){ music.play().catch(function(){}); },150);
-    });
-  }
+  music.play().catch(function(err){console.log("Music playback error:",err);});
   document.getElementById("introScreen").style.display="none";
   document.getElementById("gameApp").style.display="flex";
 });
