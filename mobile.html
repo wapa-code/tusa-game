@@ -72,7 +72,13 @@ $("next").onclick=()=>{i++;if(i<game.length)show();else {$("progress").style.dis
 document.getElementById("startHotspot").addEventListener("click",function(){
   var music=document.getElementById("bgMusic");
   music.volume=0.32;
-  music.play().catch(function(){});
+  music.load();
+  var playPromise=music.play();
+  if(playPromise!==undefined){
+    playPromise.catch(function(){
+      setTimeout(function(){ music.play().catch(function(){}); },150);
+    });
+  }
   document.getElementById("introScreen").style.display="none";
   document.getElementById("gameApp").style.display="flex";
 });
